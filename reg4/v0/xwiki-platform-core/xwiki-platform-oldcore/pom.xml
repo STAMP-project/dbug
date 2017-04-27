@@ -1,0 +1,893 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+ * See the NOTICE file distributed with this work for additional
+ * information regarding copyright ownership.
+ *
+ * This is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation; either version 2.1 of
+ * the License, or (at your option) any later version.
+ *
+ * This software is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this software; if not, write to the Free
+ * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+ * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+-->
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.xwiki.platform</groupId>
+    <artifactId>xwiki-platform-core</artifactId>
+    <version>8.3</version>
+  </parent>
+  <artifactId>xwiki-platform-oldcore</artifactId>
+  <name>XWiki Platform - Old Core</name>
+  <packaging>jar</packaging>
+  <description>XWiki Platform - Old Core</description>
+  <properties>
+    <!-- Old names of this module used for retro compatibility when resolving dependencies of old extensions -->
+    <xwiki.extension.features>com.xpn.xwiki.platform:xwiki-core</xwiki.extension.features>
+    <!-- Skipping revapi since xwiki-platform-legacy-oldcore wraps this module and runs checks on it -->
+    <xwiki.revapi.skip>true</xwiki.revapi.skip>
+    <xwiki.jacoco.instructionRatio>0.32</xwiki.jacoco.instructionRatio>
+    <!-- TODO: Remove once the tests have been fixed to not output anything to the console! -->
+    <xwiki.surefire.captureconsole.skip>true</xwiki.surefire.captureconsole.skip>
+  </properties>
+  <dependencies>
+    <dependency>
+      <groupId>org.jvnet.hudson</groupId>
+      <artifactId>org.suigeneris.jrcs.diff</artifactId>
+      <version>0.4.2</version>
+    </dependency>
+    <dependency>
+      <groupId>org.jvnet.hudson</groupId>
+      <artifactId>org.suigeneris.jrcs.rcs</artifactId>
+      <version>0.4.2</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.xwiki.commons</groupId>
+      <artifactId>xwiki-commons-diff-api</artifactId>
+      <version>${commons.version}</version>
+    </dependency>
+
+    <!-- Dependencies that we need to fix so that we don't need to have them in our custom remote repository -->
+
+    <!-- We need to create a JIRA issue on the Maven project to upload these artifacts -->
+    <dependency>
+      <groupId>info.informatica</groupId>
+      <artifactId>css4j</artifactId>
+      <version>0.20</version>
+      <!-- We want to choose the SLF4J binding only when XWiki is packaged. -->
+      <exclusions>
+        <exclusion>
+          <groupId>log4j</groupId>
+          <artifactId>log4j</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+
+    <!-- Standard dependencies found in the central repository -->
+    <!-- Apache Commons -->
+    <!-- The versions for these are defined in the parent pom -->
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-lang3</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-collections4</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>commons-io</groupId>
+      <artifactId>commons-io</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>commons-httpclient</groupId>
+      <artifactId>commons-httpclient</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-dbcp2</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>commons-fileupload</groupId>
+      <artifactId>commons-fileupload</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>commons-codec</groupId>
+      <artifactId>commons-codec</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-compress</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>commons-configuration</groupId>
+      <artifactId>commons-configuration</artifactId>
+    </dependency>
+
+    <!-- For extracting metadata from various document types -->
+    <dependency>
+      <groupId>org.apache.tika</groupId>
+      <artifactId>tika-core</artifactId>
+    </dependency>
+
+    <!-- The platform -->
+    <!-- Web part -->
+    <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>javax.servlet-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.struts</groupId>
+      <artifactId>struts-core</artifactId>
+    </dependency>
+
+    <!-- Used by parse groovy from page -->
+    <dependency>
+      <groupId>org.codehaus.groovy</groupId>
+      <artifactId>groovy-all</artifactId>
+    </dependency>
+
+    <!-- Storage -->
+    <dependency>
+      <groupId>org.hibernate</groupId>
+      <artifactId>hibernate-core</artifactId>
+      <version>3.6.9.Final</version>
+    </dependency>
+    <dependency>
+      <groupId>org.hibernate</groupId>
+      <artifactId>hibernate-c3p0</artifactId>
+      <version>3.6.9.Final</version>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.hibernate</groupId>
+      <artifactId>hibernate-validator</artifactId>
+      <version>4.3.2.Final</version>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.liquibase</groupId>
+      <artifactId>liquibase-core</artifactId>
+      <version>2.0.5</version>
+    </dependency>
+    <dependency>
+      <groupId>com.github.jsqlparser</groupId>
+      <artifactId>jsqlparser</artifactId>
+      <version>0.9.6</version>
+    </dependency>
+
+    <!-- UnexpectedException -->
+    <dependency>
+      <groupId>org.xwiki.platform</groupId>
+      <artifactId>xwiki-platform-store-api</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <!-- Authentication -->
+    <dependency>
+      <groupId>securityfilter</groupId>
+      <artifactId>securityfilter</artifactId>
+      <version>2.0</version>
+      <!-- We want to choose the SLF4J binding only when XWiki is packaged. -->
+      <exclusions>
+        <exclusion>
+          <groupId>commons-logging</groupId>
+          <artifactId>commons-logging</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+
+    <!-- XML processing -->
+    <dependency>
+      <groupId>dom4j</groupId>
+      <artifactId>dom4j</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>xml-apis</groupId>
+      <artifactId>xml-apis</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>xerces</groupId>
+      <artifactId>xercesImpl</artifactId>
+      <!-- Only needed at runtime -->
+      <scope>runtime</scope>
+    </dependency>
+    <!-- Used to generate XHTML in Java (generally in object property displayer) -->
+    <!-- TODO: We should drop ECS -->
+    <dependency>
+      <groupId>ecs</groupId>
+      <artifactId>ecs</artifactId>
+      <version>1.4.2</version>
+    </dependency>
+
+    <!-- HTML Export/PDF Export -->
+    <dependency>
+      <groupId>org.xwiki.platform</groupId>
+      <artifactId>xwiki-platform-url-scheme-filesystem</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <!-- PDF export, image processing -->
+    <dependency>
+      <groupId>org.apache.xmlgraphics</groupId>
+      <artifactId>fop</artifactId>
+      <version>2.1</version>
+      <exclusions>
+        <!-- We want to choose the SLF4J binding only when XWiki is packaged. -->
+        <exclusion>
+          <groupId>commons-logging</groupId>
+          <artifactId>commons-logging</artifactId>
+        </exclusion>
+        <!-- We want a cleaner (from Maven point of view) version of avalon -->
+        <exclusion>
+          <artifactId>avalon-framework-api</artifactId>
+          <groupId>avalon-framework</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>avalon-framework-impl</artifactId>
+          <groupId>avalon-framework</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <!-- Get proper version of avalon required by FOP -->
+    <dependency>
+      <artifactId>avalon-framework-api</artifactId>
+      <groupId>org.apache.avalon.framework</groupId>
+      <version>4.3.1</version>
+    </dependency>
+    <dependency>
+      <artifactId>avalon-framework-impl</artifactId>
+      <groupId>org.apache.avalon.framework</groupId>
+      <version>4.3.1</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.xmlgraphics</groupId>
+      <artifactId>batik-rasterizer</artifactId>
+    </dependency>
+    <!-- fop gets us batik but not batik-codec and we need this one for SVGPlugin -->
+    <dependency>
+      <groupId>org.apache.xmlgraphics</groupId>
+      <artifactId>batik-codec</artifactId>
+      <scope>runtime</scope>
+    </dependency>
+
+    <!-- Misc -->
+    <!-- Better date manipulation than what JDK provides -->
+    <dependency>
+      <groupId>joda-time</groupId>
+      <artifactId>joda-time</artifactId>
+    </dependency>
+    <!-- Mail sender -->
+    <dependency>
+      <groupId>org.xwiki.platform</groupId>
+      <artifactId>xwiki-platform-mail-send-api</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>javax.mail</groupId>
+      <artifactId>mail</artifactId>
+    </dependency>
+
+    <!-- Other XWiki modules -->
+    <dependency>
+      <groupId>org.xwiki.commons</groupId>
+      <artifactId>xwiki-commons-component-api</artifactId>
+      <version>${commons.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.xwiki.commons</groupId>
+      <artifactId>xwiki-commons-environment-api</artifactId>
+      <version>${commons.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.xwiki.commons</groupId>
+      <artifactId>xwiki-commons-context</artifactId>
+      <version>${commons.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.xwiki.commons</groupId>
+      <artifactId>xwiki-commons-script</artifactId>
+      <version>${commons.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.xwiki.commons</groupId>
+      <artifactId>xwiki-commons-classloader-api</artifactId>
+      <version>${commons.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.xwiki.commons</groupId>
+      <artifactId>xwiki-commons-job</artifactId>
+      <version>${commons.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.xwiki.commons</groupId>
+      <artifactId>xwiki-commons-properties</artifactId>
+      <version>${commons.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.xwiki.commons</groupId>
+      <artifactId>xwiki-commons-configuration-api</artifactId>
+      <version>${commons.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.xwiki.commons</groupId>
+      <artifactId>xwiki-commons-observation-local</artifactId>
+      <version>${commons.version}</version>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.xwiki.platform</groupId>
+      <artifactId>xwiki-platform-observation-remote</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.xwiki.platform</groupId>
+      <artifactId>xwiki-platform-model</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <!-- TODO: This dependency shouldn't be in this module since it means we're tying this module and all other
+         modules using it to the Servlet environment, which is pretty bad. To be able to remove this dependency
+         we first need to be able to split DefaultVelocityManager so that the part that is related to the Servlet
+         environment (the Velocity webapp loader) is moved to its own module. -->
+    <dependency>
+      <groupId>org.xwiki.platform</groupId>
+      <artifactId>xwiki-platform-velocity-webapp</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.xwiki.platform</groupId>
+      <artifactId>xwiki-platform-bridge</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.xwiki.rendering</groupId>
+      <artifactId>xwiki-rendering-api</artifactId>
+      <version>${rendering.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.xwiki.platform</groupId>
+      <artifactId>xwiki-platform-rendering-parser</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.xwiki.platform</groupId>
+      <artifactId>xwiki-platform-rendering-xwiki</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.xwiki.platform</groupId>
+      <artifactId>xwiki-platform-url-api</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.xwiki.platform</groupId>
+      <artifactId>xwiki-platform-url-scheme-standard</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.xwiki.platform</groupId>
+      <artifactId>xwiki-platform-display-api</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.xwiki.platform</groupId>
+      <artifactId>xwiki-platform-sheet-api</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.xwiki.platform</groupId>
+      <artifactId>xwiki-platform-skin-api</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.xwiki.platform</groupId>
+      <artifactId>xwiki-platform-template-api</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <!-- Used by com.xpn.xwiki.web.CommentAction -->
+    <dependency>
+      <groupId>org.xwiki.platform</groupId>
+      <artifactId>xwiki-platform-captcha</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.xwiki.platform</groupId>
+      <artifactId>xwiki-platform-formula-renderer</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.xwiki.commons</groupId>
+      <artifactId>xwiki-commons-cache-api</artifactId>
+      <version>${commons.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.xwiki.commons</groupId>
+      <artifactId>xwiki-commons-cache-infinispan</artifactId>
+      <version>${commons.version}</version>
+      <!-- Only needed at runtime since it's a component implementation -->
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.xwiki.commons</groupId>
+      <artifactId>xwiki-commons-xml</artifactId>
+      <version>${commons.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.xwiki.commons</groupId>
+      <artifactId>xwiki-commons-extension-api</artifactId>
+      <version>${commons.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.xwiki.platform</groupId>
+      <artifactId>xwiki-platform-query-manager</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.xwiki.platform</groupId>
+      <artifactId>xwiki-platform-office-importer</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.xwiki.platform</groupId>
+      <artifactId>xwiki-platform-component-multi</artifactId>
+      <version>${project.version}</version>
+      <!-- Only required at runtime (ie in the distribution) -->
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.xwiki.platform</groupId>
+      <artifactId>xwiki-platform-query-xwql</artifactId>
+      <version>${project.version}</version>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.xwiki.platform</groupId>
+      <artifactId>xwiki-platform-csrf</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.xwiki.platform</groupId>
+      <artifactId>xwiki-platform-localization-api</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.xwiki.platform</groupId>
+      <artifactId>xwiki-platform-security-api</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.xwiki.platform</groupId>
+      <artifactId>xwiki-platform-wiki-api</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.xwiki.platform</groupId>
+      <artifactId>xwiki-platform-resource-default</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.xwiki.platform</groupId>
+      <artifactId>xwiki-platform-edit-api</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <!-- Used by HibernateDataMigrationManager to temporarily disable logback logging in hibernate -->
+    <dependency>
+      <groupId>org.xwiki.commons</groupId>
+      <artifactId>xwiki-commons-logging-api</artifactId>
+      <version>${commons.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.xwiki.commons</groupId>
+      <artifactId>xwiki-commons-logging-logback</artifactId>
+      <version>${commons.version}</version>
+      <scope>test</scope>
+    </dependency>
+
+    <!-- Used in to prioritize MandatoryDocumentInitializers -->
+    <dependency>
+      <groupId>javax.annotation</groupId>
+      <artifactId>javax.annotation-api</artifactId>
+    </dependency>
+
+    <!-- Test dependencies -->
+
+    <!-- Used to mock XWiki class -->
+    <dependency>
+      <groupId>org.jmock</groupId>
+      <artifactId>jmock-legacy</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.xwiki.platform</groupId>
+      <artifactId>xwiki-platform-rendering-macro-script</artifactId>
+      <version>${project.version}</version>
+      <type>test-jar</type>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.xwiki.platform</groupId>
+      <artifactId>xwiki-platform-rendering-macro-velocity</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.xwiki.platform</groupId>
+      <artifactId>xwiki-platform-rendering-macro-groovy</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.xwiki.platform</groupId>
+      <artifactId>xwiki-platform-xar-model</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.xwiki.platform</groupId>
+      <artifactId>xwiki-platform-filter-instance-api</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.xwiki.platform</groupId>
+      <artifactId>xwiki-platform-filter-instance-document</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.xwiki.platform</groupId>
+      <artifactId>xwiki-platform-filter-stream-xar</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <!-- XWiki syntax parsers -->
+    <dependency>
+      <groupId>org.xwiki.rendering</groupId>
+      <artifactId>xwiki-rendering-syntax-xwiki21</artifactId>
+      <version>${rendering.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.xwiki.rendering</groupId>
+      <artifactId>xwiki-rendering-syntax-xhtml</artifactId>
+      <version>${rendering.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.xwiki.rendering</groupId>
+      <artifactId>xwiki-rendering-syntax-html</artifactId>
+      <version>${rendering.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>xmlunit</groupId>
+      <artifactId>xmlunit</artifactId>
+      <version>1.6</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.xwiki.commons</groupId>
+      <artifactId>xwiki-commons-tool-test-component</artifactId>
+      <version>${commons.version}</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+  <build>
+    <plugins>
+      <!-- Publish a Core Test JAR -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <executions>
+          <execution>
+            <!-- We must have an ID here, as otherwise the configuration is used for generating the normal jar, too.
+                 See XWIKI-2757 -->
+            <id>build-test-jar</id>
+            <goals>
+              <goal>test-jar</goal>
+            </goals>
+            <configuration>
+              <includes>
+                <include>**/test/**/*.class</include>
+              </includes>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <!-- Apply the Checkstyle configurations defined in the top level pom.xml file -->
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-checkstyle-plugin</artifactId>
+        <configuration>
+          <excludes>
+              **/XWikiConfig.java,
+              **/XWikiConstant.java,
+              **/XWikiContext.java,
+              **/XWikiException.java,
+              **/XWiki.java,
+              **/api/Attachment.java,
+              **/api/Class.java,
+              **/api/Collection.java,
+              **/api/CriteriaService.java,
+              **/api/Document.java,
+              **/api/DocumentSection.java,
+              **/api/Object.java,
+              **/api/XWiki.java,
+              **/atom/lifeblog/LifeblogServices.java,
+              **/atom/lifeblog/UserBlog.java,
+              **/atom/WSSEHttpHeader.java,
+              **/atom/XWikiHelper.java,
+              **/content/parsers/RenamePageReplaceLinkHandler.java,
+              **/criteria/api/XWikiCriteriaService.java,
+              **/criteria/impl/DurationFactory.java,
+              **/criteria/impl/Duration.java,
+              **/criteria/impl/PeriodFactory.java,
+              **/criteria/impl/Period.java,
+              **/criteria/impl/RangeFactory.java,
+              **/criteria/impl/Range.java,
+              **/criteria/impl/RevisionCriteriaFactory.java,
+              **/criteria/impl/RevisionCriteria.java,
+              **/criteria/impl/ScopeFactory.java,
+              **/criteria/impl/Scope.java,
+              **/criteria/impl/XWikiCriteriaServiceImpl.java,
+              **/DefaultSkinAccessBridge.java,
+              **/doc/AttachmentDiff.java,
+              **/doc/DefaultDocumentAccessBridge.java,
+              **/doc/DeletedAttachment.java,
+              **/doc/DocumentErrorHandler.java,
+              **/doc/LazyXWikiDocument.java,
+              **/doc/MetaDataDiff.java,
+              **/doc/rcs/XWikiPatchUtils.java,
+              **/doc/rcs/XWikiRCSArchive.java,
+              **/doc/XWikiAttachment.java,
+              **/doc/XWikiDocument.java,
+              **/doc/XWikiLink.java,
+              **/doc/XWikiLock.java,
+              **/export/html/HtmlPackager.java,
+              **/i18n/i18n.java,
+              **/internal/DefaultCoreConfiguration.java,
+              **/internal/DefaultXWikiStubContextProvider.java,
+              **/internal/render/OldRendering.java,
+              **/render/groovy/ParseGroovyFromString.java,
+              **/internal/mandatory/AbstractRightsDocumentInitializer.java,
+              **/internal/mandatory/XWikiPreferencesDocumentInitializer.java,
+              **/internal/mandatory/XWikiUsersDocumentInitializer.java,
+              **/internal/model/reference/CompactStringEntityReferenceSerializer.java,
+              **/internal/model/reference/CompactWikiStringEntityReferenceSerializer.java,
+              **/internal/model/reference/CurrentEntityReferenceValueProvider.java,
+              **/internal/model/reference/CurrentMixedEntityReferenceValueProvider.java,
+              **/internal/model/reference/CurrentMixedReferenceDocumentReferenceResolver.java,
+              **/internal/model/reference/CurrentMixedReferenceEntityReferenceResolver.java,
+              **/internal/model/reference/CurrentMixedStringDocumentReferenceResolver.java,
+              **/internal/model/reference/CurrentReferenceDocumentReferenceResolver.java,
+              **/internal/model/reference/CurrentReferenceEntityReferenceResolver.java,
+              **/internal/model/reference/CurrentStringAttachmentReferenceResolver.java,
+              **/internal/model/reference/CurrentStringDocumentReferenceResolver.java,
+              **/internal/model/reference/CurrentStringEntityReferenceResolver.java,
+              **/internal/observation/remote/converter/AbstractXWikiEventConverter.java,
+              **/internal/observation/remote/converter/ActionExecutionEventConverter.java,
+              **/internal/script/DebugScriptService.java,
+              **/internal/skin/*.java,
+              **/internal/template/InternalTemplateManager.java,
+              **/internal/template/TemplateEnvironmentResource.java,
+              **/monitor/api/MonitorData.java,
+              **/monitor/api/MonitorPlugin.java,
+              **/monitor/api/MonitorTimer.java,
+              **/monitor/api/MonitorTimerSummary.java,
+              **/objects/BaseCollection.java,
+              **/objects/BaseElement.java,
+              **/objects/BaseObject.java,
+              **/objects/BaseProperty.java,
+              **/objects/BaseStringProperty.java,
+              **/objects/classes/BaseClass.java,
+              **/objects/classes/BooleanClass.java,
+              **/objects/classes/ClassInterface.java,
+              **/objects/classes/DBListClass.java,
+              **/objects/classes/DBTreeListClass.java,
+              **/objects/classes/LevelsClass.java,
+              **/objects/classes/ListClass.java,
+              **/objects/classes/ListItem.java,
+              **/objects/classes/NumberClass.java,
+              **/objects/classes/PasswordClass.java,
+              **/objects/classes/PropertyClassInterface.java,
+              **/objects/classes/PropertyClass.java,
+              **/objects/classes/StaticListClass.java,
+              **/objects/classes/StringClass.java,
+              **/objects/classes/TextAreaClass.java,
+              **/objects/DBStringListProperty.java,
+              **/objects/DoubleProperty.java,
+              **/objects/ElementComparator.java,
+              **/objects/ElementInterface.java,
+              **/objects/FloatProperty.java,
+              **/objects/IntegerProperty.java,
+              **/objects/LargeStringProperty.java,
+              **/objects/ListProperty.java,
+              **/objects/LongProperty.java,
+              **/objects/NumberProperty.java,
+              **/objects/ObjectDiff.java,
+              **/objects/ObjectInterface.java,
+              **/objects/PropertyInterface.java,
+              **/objects/StringListProperty.java,
+              **/pdf/impl/PdfExportImpl.java,
+              **/pdf/impl/PdfURLFactory.java,
+              **/plugin/image/ImagePlugin.java,
+              **/plugin/autotag/FrenchStemmer.java,
+              **/plugin/mail/MailPluginApi.java,
+              **/plugin/mail/MailPlugin.java,
+              **/plugin/packaging/DocumentFilter.java,
+              **/plugin/packaging/DocumentInfoAPI.java,
+              **/plugin/packaging/DocumentInfo.java,
+              **/plugin/packaging/ExcludeDocumentException.java,
+              **/plugin/packaging/PackageAPI.java,
+              **/plugin/packaging/PackageException.java,
+              **/plugin/packaging/Package.java,
+              **/plugin/packaging/PackagePlugin.java,
+              **/plugin/query/DefaultQuery.java,
+              **/plugin/query/HibernateQuery.java,
+              **/plugin/query/IQueryFactory.java,
+              **/plugin/query/IQuery.java,
+              **/plugin/query/OrderClause.java,
+              **/plugin/query/QueryPluginApi.java,
+              **/plugin/query/QueryPlugin.java,
+              **/plugin/query/SecHibernateQuery.java,
+              **/plugin/query/SepStringBuffer.java,
+              **/plugin/query/XWikiCriteria.java,
+              **/plugin/query/XWikiNamespaceResolver.java,
+              **/plugin/query/XWikiQueryConstants.java,
+              **/plugin/query/XWikiQuery.java,
+              **/plugin/svg/SVGPluginApi.java,
+              **/plugin/svg/SVGPlugin.java,
+              **/plugin/XWikiPluginManager.java,
+              **/pref/api/XWikiPrefService.java,
+              **/pref/impl/xwiki/XWikiPrefServiceImpl.java,
+              **/render/DefaultVelocityManager.java,
+              **/render/WikiSubstitution.java,
+              **/render/XWikiScriptContextInitializer.java,
+              **/render/XWikiVelocityContextInitializer.java,
+              **/render/groovy/XWikiPageClassLoader.java,
+              **/security/XWikiSecurityManager.java,
+              **/store/DBCPConnectionProvider.java,
+              **/store/hibernate/DefaultHibernateSessionFactory.java,
+              **/store/hibernate/HibernateSessionFactory.java,
+              <!-- AbstractDataMigrationManager has a fan out complexity of 25 that may needs to be investigated. -->
+              **/store/migration/AbstractDataMigrationManager.java,
+              <!-- Hibernate migrations use anonymous inner class (doInHibernate) that exceeds the 20 lines limit. -->
+              **/store/migration/hibernate/HibernateDataMigrationManager.java,
+              **/store/migration/hibernate/LegacyDataMigration.java,
+              **/store/migration/hibernate/R4340XWIKI883DataMigration.java,
+              **/store/migration/hibernate/R4359XWIKI1459DataMigration.java,
+              **/store/migration/hibernate/R6079XWIKI1878DataMigration.java,
+              **/store/migration/hibernate/R7350XWIKI2079DataMigration.java,
+              **/store/migration/hibernate/R40000XWIKI6990DataMigration.java,
+              **/store/XWikiAttachmentStoreInterface.java,
+              **/store/XWikiBatcherFactory.java,
+              **/store/XWikiBatcher.java,
+              **/store/XWikiBatcherStats.java,
+              **/store/XWikiCacheStoreInterface.java,
+              **/store/XWikiCacheStore.java,
+              **/store/XWikiDefaultStore.java,
+              **/store/XWikiHibernateAttachmentStore.java,
+              **/store/XWikiHibernateBaseStore.java,
+              **/store/XWikiHibernateStore.java,
+              **/store/XWikiStoreInterface.java,
+              **/store/XWikiVersioningStoreInterface.java,
+              **/test/smtp/SimpleSmtpServer.java,
+              **/test/smtp/SmtpActionType.java,
+              **/test/smtp/SmtpMessage.java,
+              **/test/smtp/SmtpRequest.java,
+              **/test/smtp/SmtpResponse.java,
+              **/test/smtp/SmtpState.java,
+              **/user/api/XWikiAuthService.java,
+              **/user/api/XWikiGroupService.java,
+              **/user/api/XWikiRightNotFoundException.java,
+              **/user/api/XWikiRightService.java,
+              **/user/api/XWikiUser.java,
+              **/user/impl/xwiki/AppServerTrustedAuthServiceImpl.java,
+              **/user/impl/xwiki/GroovyAuthServiceImpl.java,
+              **/user/impl/xwiki/MyBasicAuthenticator.java,
+              **/user/impl/xwiki/MyFilterConfig.java,
+              **/user/impl/xwiki/MyFormAuthenticator.java,
+              **/user/impl/xwiki/MyPersistentLoginManager.java,
+              **/user/impl/xwiki/XWikiAuthenticator.java,
+              **/user/impl/xwiki/XWikiAuthServiceImpl.java,
+              **/user/impl/xwiki/XWikiGroupServiceImpl.java,
+              **/user/impl/xwiki/XWikiRightServiceImpl.java,
+              **/util/AbstractXWikiRunnable.java,
+              **/util/MenuSubstitution.java,
+              **/util/Programming.java,
+              **/util/TOCGenerator.java,
+              **/util/Util.java,
+              **/validation/XWikiDefaultValidation.java,
+              **/validation/XWikiValidationInterface.java,
+              **/validation/XWikiValidationStatus.java,
+              **/web/AdminAction.java,
+              **/web/AttachAction.java,
+              **/web/CancelAction.java,
+              **/web/DeleteAction.java,
+              **/web/DeleteAttachmentAction.java,
+              **/web/DotAction.java,
+              **/web/DownloadAction.java,
+              **/web/DownloadRevAction.java,
+              **/web/EditAction.java,
+              **/web/EditBean.java,
+              **/web/EditForm.java,
+              **/web/ExportAction.java,
+              **/web/ExportURLFactory.java,
+              **/web/HomePageRedirectServlet.java,
+              **/web/ImportAction.java,
+              **/web/includeservletasstring/BufferedResponse.java,
+              **/web/includeservletasstring/BufferOutputStream.java,
+              **/web/includeservletasstring/IncludeServletAsString.java,
+              **/web/InlineAction.java,
+              **/web/LifeBlogAction.java,
+              **/web/LockAction.java,
+              **/web/ObjectAddAction.java,
+              **/web/ObjectAddForm.java,
+              **/web/ObjectRemoveAction.java,
+              **/web/ObjectRemoveForm.java,
+              **/web/PrepareEditForm.java,
+              **/web/PreviewAction.java,
+              **/web/PreviewForm.java,
+              **/web/PropAddAction.java,
+              **/web/PropAddForm.java,
+              **/web/PropUpdateAction.java,
+              **/web/RedirectAction.java,
+              **/web/ResetVersionsAction.java,
+              **/web/RollbackAction.java,
+              **/web/RollbackForm.java,
+              **/web/SaveAction.java,
+              **/web/SkinAction.java,
+              **/web/StatusAction.java,
+              **/web/SVGAction.java,
+              **/web/TexAction.java,
+              **/web/UploadAction.java,
+              **/web/Utils.java,
+              **/web/ViewAttachRevAction.java,
+              **/web/ViewrevAction.java,
+              **/web/XWikiAction.java,
+              **/web/XWikiConfigurationService.java,
+              **/web/XWikiDebugGWTURLFactory.java,
+              **/web/XWikiDefaultURLFactory.java,
+              **/web/XWikiEngineContext.java,
+              **/web/XWikiForm.java,
+              **/web/XWikiMessageTool.java,
+              **/web/XWikiRequest.java,
+              **/web/XWikiRequestProcessor.java,
+              **/web/XWikiResourceManagerImpl.java,
+              **/web/XWikiResponse.java,
+              **/web/XWikiServletContext.java,
+              **/web/XWikiServletRequest.java,
+              **/web/XWikiServletRequestStub.java,
+              **/web/XWikiServletResponse.java,
+              **/web/XWikiServletResponseStub.java,
+              **/web/XWikiServletURLFactory.java,
+              **/web/XWikiURLFactory.java,
+              **/web/XWikiURLFactoryServiceImpl.java,
+              **/web/XWikiURLFactoryService.java,
+              <!-- Small Fan-Out complexity issue but it would need a big refactor to be fixed. -->
+              **/stats/impl/xwiki/XWikiStatsReader.java
+          </excludes>
+          <resourceExcludes>
+              ApplicationResources*.properties
+          </resourceExcludes>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>

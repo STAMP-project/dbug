@@ -1,0 +1,40 @@
+#if ($services.wysiwyg.isSyntaxSupported($doc.syntax.toIdString()))
+  ## Insert JS and CSS needed for the fullscreen edit feature
+  $xwiki.jsfx.use('uicomponents/widgets/fullScreen.js', {
+    'forceSkinAction': true,
+    'language': $xcontext.locale
+  })
+  $xwiki.ssfx.use('uicomponents/widgets/fullScreen.css', true)
+  #set ($formname = 'edit')
+  #set ($saveaction = 'save')
+  #set ($previewenabled = true)
+  #set ($xredirect = $escapetool.xml($request.xredirect))
+  <div>
+    <div class="hidden">
+      ## CSRF prevention
+      <input type="hidden" name="form_token" value="$!services.csrf.token" />
+      <input type="hidden" name="template" value="$!escapetool.xml($request.template)" />
+      #if ($request.section && $request.section != '')
+        #set ($xcontinue = $doc.getURL('edit', "editor=wysiwyg&amp;section=$!escapetool.xml($request.section)"))
+      #else
+        #set ($xcontinue = $doc.getURL('edit', 'editor=wysiwyg'))
+      #end
+      <input type="hidden" name="xcontinue" value="$xcontinue" />
+      <input type="hidden" name="xredirect" value="$!xredirect" />
+      <input type="hidden" name="language" value="$!tdoc.realLocale" />
+    </div>
+    <div id="xwikitext">
+      <div id="xwikieditcontent">
+        ## The editor will replace the following text area with its own widget.
+        ## If JavaScript is disabled the user will still be able to edit the document using this HTML text area.
+        $xwiki.getTextArea($tdoc.content)
+        ## Edit the document content using a fully-fledged editor.
+        #wysiwyg_editProperty($tdoc 'content' true)
+      </div>
+    </div>
+  </div>
+  #set ($editactions = 'bottom')
+  <div class="bottombuttons">#template('editactions.vm')</div>
+#else
+  $response.sendRedirect($doc.getURL('edit', 'editor=wiki'))
+#end

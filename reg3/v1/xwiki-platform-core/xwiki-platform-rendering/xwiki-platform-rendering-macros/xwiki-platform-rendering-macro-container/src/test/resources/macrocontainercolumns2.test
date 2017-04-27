@@ -1,0 +1,44 @@
+.runTransformations
+.#-----------------------------------------------------
+.# Test that columns container with one group puts content in a group 
+.#-----------------------------------------------------
+.input|xwiki/2.0
+.#-----------------------------------------------------
+{{container layoutStyle="columns"}}
+(((foobar)))
+{{/container}}
+
+{{container layoutStyle="columns" justify="true"}}
+(((foobar)))
+{{/container}}
+.#-----------------------------------------------------
+.expect|event/1.0
+.#-----------------------------------------------------
+beginDocument
+beginMacroMarkerStandalone [container] [layoutStyle=columns] [(((foobar)))]
+beginGroup [[class]=[container-columns]]
+beginGroup [[class]=[column first-column last-column]]
+beginParagraph
+onWord [foobar]
+endParagraph
+endGroup [[class]=[column first-column last-column]]
+beginGroup [[class]=[clearfloats]]
+endGroup [[class]=[clearfloats]]
+endGroup [[class]=[container-columns]]
+endMacroMarkerStandalone [container] [layoutStyle=columns] [(((foobar)))]
+beginMacroMarkerStandalone [container] [layoutStyle=columns|justify=true] [(((foobar)))]
+beginGroup [[class]=[container-justified container-columns]]
+beginGroup [[class]=[column first-column last-column]]
+beginParagraph
+onWord [foobar]
+endParagraph
+endGroup [[class]=[column first-column last-column]]
+beginGroup [[class]=[clearfloats]]
+endGroup [[class]=[clearfloats]]
+endGroup [[class]=[container-justified container-columns]]
+endMacroMarkerStandalone [container] [layoutStyle=columns|justify=true] [(((foobar)))]
+endDocument
+.#-----------------------------------------------------
+.expect|xhtml/1.0
+.#-----------------------------------------------------
+<div class="container-columns"><div class="column first-column last-column"><p>foobar</p></div><div class="clearfloats"></div></div><div class="container-justified container-columns"><div class="column first-column last-column"><p>foobar</p></div><div class="clearfloats"></div></div>

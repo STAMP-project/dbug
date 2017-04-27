@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+ * See the NOTICE file distributed with this work for additional
+ * information regarding copyright ownership.
+ *
+ * This is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation; either version 2.1 of
+ * the License, or (at your option) any later version.
+ *
+ * This software is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this software; if not, write to the Free
+ * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+ * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+-->
+
+<xwikidoc version="1.2" reference="XWiki.XWikiUserPreferencesSheet" locale="">
+  <web>XWiki</web>
+  <name>XWikiUserPreferencesSheet</name>
+  <language/>
+  <defaultLanguage/>
+  <translation>0</translation>
+  <creator>xwiki:XWiki.Admin</creator>
+  <creationDate>1364996782000</creationDate>
+  <parent>XWiki.XWikiUserSheet</parent>
+  <author>xwiki:XWiki.Admin</author>
+  <contentAuthor>xwiki:XWiki.Admin</contentAuthor>
+  <date>1366362037000</date>
+  <contentUpdateDate>1366361504000</contentUpdateDate>
+  <version>1.1</version>
+  <title/>
+  <comment/>
+  <minorEdit>false</minorEdit>
+  <syntaxId>xwiki/2.0</syntaxId>
+  <hidden>true</hidden>
+  <content>{{velocity}}
+###############################
+##         GLOBALS
+###############################
+#set ($xclass  = $xwiki.getClass('XWiki.XWikiUsers'))
+#set ($isEdit  = ($xcontext.action == 'edit'))
+#set ($obj     = $doc.getObject("XWiki.XWikiUsers"))
+#set ($discard = $doc.use($obj))
+#set ($discard = $xwiki.ssx.use('XWiki.XWikiUserSheet'))
+###############################
+##        CONTROLLER
+###############################
+#if(!$obj)
+  {{info}}$services.localization.render('xe.admin.users.applyonusers'){{/info}}##
+#else
+  #displayFields()
+#end
+###############################
+##  DISPLAY FIELD OPTION LABEL
+###############################
+#macro(displayFieldOptionLabel $option)
+  #if ($services.localization.render($option.label) != $option.label)
+    $services.localization.render($option.label)
+  #else
+    $option.value
+  #end
+#end
+###############################
+##   DISPLAY SELECT FIELD
+###############################
+#macro(displaySelectField $fieldName $default)
+  #set ($value = $doc.getValue($fieldName, $obj))
+  #set ($prop = $xclass.get($fieldName))
+  #set ($options = [])
+  #if ($prop.classType == 'Boolean')
+    #set ($discard = $options.add({'value': 1, 'label': 'yes'}))
+    #set ($discard = $options.add({'value': 0, 'label': 'no'}))
+  #elseif ($prop.classType == 'Timezone')
+    #foreach($tz in $xwiki.jodatime.serverTimezone.availableIDs)
+      #set ($discard = $options.add({'value': $tz, 'label': $tz}))
+    #end
+    ## If the default value is empty (nothing has been set by the administrator), the fallback is the timezone of the 
+    ## server. But we won't display the "System Default" option, which is technical (it supposes the user knows there 
+    ## is a server with its own timezone, etc...)
+    #if ("$!default" == '')
+      #set ($default = $xwiki.jodatime.serverTimezone)
+    #end
+  #else
+    #foreach($v in $prop.listValues)
+      #set ($discard = $options.add({'value': $v, 'label': "XWiki.XWikiUsers_${fieldName}_${v}"}))
+    #end
+  #end
+  #if ($isEdit)
+    &lt;select name="XWiki.XWikiUsers_0_${fieldName}" id="XWiki.XWikiUsers_0_${fieldName}" size="1"&gt;
+      #if ($default)
+        &lt;option value=""&gt;---&lt;/option&gt;
+      #end
+      #foreach ($option in $options)
+        ## Some properties actually have "---" as a possible value, so we don't display it because we have
+        ## already displayed it above.
+        #if ($option.value != '---')
+          &lt;option value="$option.value" #if($value == $option.value)selected="selected"#end&gt;
+            #displayFieldOptionLabel($option)
+            #if ($default == $option.value)
+              ($services.localization.render('userprofile.default'))
+            #end
+          &lt;/option&gt;
+        #end
+      #end
+    &lt;/select&gt;
+  #else
+    #if ("$!value" != '')
+      $doc.display($fieldName)
+    #else
+      #foreach ($option in $options)
+        #if ("$!default" == "$!option.value")
+          #displayFieldOptionLabel($option)
+          &lt;small&gt;($services.localization.render('userprofile.default'))&lt;/small&gt;
+        #end
+      #end
+    #end
+  #end
+#end
+###############################
+##      DISPLAY FIELD
+###############################
+#macro(displayField $fieldName $label $default)
+  #set ($hintKey = "XWiki.XWikiUsers_${fieldName}.hint")
+  &lt;dt&gt;
+    &lt;label&gt;$services.localization.render($label)&lt;/label&gt;
+    #if ($services.localization.get($hintKey))
+      &lt;span class="xHint"&gt;$services.localization.render($hintKey)&lt;/span&gt;
+    #end
+  &lt;/dt&gt;
+  &lt;dd&gt;
+    #if ($fieldName == 'timezone' &amp;&amp; !$xwiki.jodatime)
+      #if ($isEdit)
+        &lt;input id="XWiki.XWikiUsers_0_${fieldName}" name="XWiki.XWikiUsers_0_${fieldName}" type="text" value="$!escapetool.xml($obj.getValue($fieldName))"/&gt;
+      #else
+        #if ("$!obj.getValue('timezone')" == '' &amp;&amp; "$!xwiki.getXWikiPreference('timezone')" != '')
+          $xwiki.getXWikiPreference('timezone') &lt;small&gt;($services.localization.render('userprofile.default'))&lt;/small&gt;
+        #else
+          $doc.display('timezone')
+        #end
+      #end
+    #else
+      #displaySelectField($fieldName, $default)
+    #end
+  &lt;/dd&gt;
+#end
+###############################
+##      DISPLAY FIELDS
+###############################
+#macro(displayFields)
+{{html}}
+  &lt;div class="#if($xcontext.action == 'view')half #{else}full #{end}column xform"&gt;
+    &lt;div class="userPreferences"&gt;
+      #if($xcontext.action == 'view' &amp;&amp; $hasEdit)
+        &lt;div class="editProfileCategory"&gt;&lt;a href="$doc.getURL('edit', 'category=preferences')"&gt;&lt;span class="hidden"&gt;$services.localization.render('platform.core.profile.category.preferences.edit')&lt;/span&gt;&lt;/a&gt;&lt;/div&gt;
+      #end
+      &lt;h1&gt;$services.localization.render('platform.core.profile.section.displayPreferences')&lt;/h1&gt;
+      &lt;dl&gt;
+        #displayField('displayHiddenDocuments', 'platform.core.profile.displayHiddenDocuments', '0')
+        #displayField('accessibility'         , 'platform.core.profile.enableAccessibility'   , '0')
+      &lt;/dl&gt;
+      &lt;h1&gt;$services.localization.render('platform.core.profile.section.localizationPreferences')&lt;/h1&gt;
+      &lt;dl&gt;
+        #set ($defaultValue = $xwiki.getXWikiPreference('timezone'))
+        #displayField('timezone'              , 'platform.core.profile.timezone'              , $defaultValue)
+      &lt;/dl&gt;
+      &lt;h1&gt;$services.localization.render('platform.core.profile.section.editorPreferences')&lt;/h1&gt;
+      &lt;dl&gt;
+        #set ($defaultValue = $xwiki.getXWikiPreference('editor'))
+        #if ("$!defaultValue" == '')
+          #set ($defaultValue = 'Text')
+        #end
+        #displayField('editor'                , 'platform.core.profile.editor'                , $defaultValue)
+        #displayField('usertype'              , 'platform.core.profile.userType'              , 'Simple')
+      &lt;/dl&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+  #set($isMyProfile = ($xwiki.getDocument($xcontext.user).prefixedFullName == $doc.prefixedFullName))
+  #if(($isMyProfile || $hasAdmin) &amp;&amp; ($xcontext.action == 'view') &amp;&amp; !$doc.getObject('XWiki.LDAPProfileClass'))
+    &lt;div class="half column"&gt;
+      &lt;div class="passwordManagement"&gt;
+        &lt;h1&gt;$services.localization.render('platform.core.profile.section.security')&lt;/h1&gt;
+        &lt;span class="buttonwrapper"&gt;&lt;a id="changePassword" href="$doc.getURL('view', 'xpage=passwd')"&gt;$services.localization.render('platform.core.profile.changePassword')&lt;/a&gt;&lt;/span&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+  #end
+  &lt;div class="clearfloats"&gt;&amp;nbsp;&lt;/div&gt;
+{{/html}}##
+#end
+{{/velocity}}</content>
+</xwikidoc>

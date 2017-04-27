@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+ * See the NOTICE file distributed with this work for additional
+ * information regarding copyright ownership.
+ *
+ * This is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation; either version 2.1 of
+ * the License, or (at your option) any later version.
+ *
+ * This software is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this software; if not, write to the Free
+ * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+ * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+-->
+
+<xwikidoc version="1.1">
+  <web>XWiki</web>
+  <name>SchedulerJobSheet</name>
+  <language/>
+  <defaultLanguage/>
+  <translation>0</translation>
+  <creator>xwiki:XWiki.Admin</creator>
+  <creationDate>1252454400000</creationDate>
+  <parent>XWiki.SchedulerJobClass</parent>
+  <author>xwiki:XWiki.Admin</author>
+  <contentAuthor>xwiki:XWiki.Admin</contentAuthor>
+  <date>1418224809000</date>
+  <contentUpdateDate>1418224809000</contentUpdateDate>
+  <version>1.1</version>
+  <title>#sheetTitle('Scheduler Job Sheet', 'XWiki.SchedulerJobClass')</title>
+  <comment/>
+  <minorEdit>false</minorEdit>
+  <syntaxId>xwiki/2.1</syntaxId>
+  <hidden>true</hidden>
+  <content>{{velocity}}
+#if($doc.getObject('XWiki.SchedulerJobClass'))
+#set($job = $doc.getObject("XWiki.SchedulerJobClass"))
+**$services.localization.render('xe.scheduler.job.name')**
+
+$!doc.display('jobName')
+
+**$services.localization.render('xe.scheduler.job.description')**
+
+$!doc.display('jobDescription')
+
+**$services.localization.render('xe.scheduler.job.expression')**
+
+$!doc.display('cron')
+
+**$services.localization.render('xe.scheduler.job.script')**
+
+#if($xcontext.action=="edit")
+$!doc.display("script")
+#elseif($xcontext.action=="view" &amp;&amp; "$!job.getProperty('script').value" !="")
+{{code language="groovy"}}
+$job.getProperty('script').value
+{{/code}}
+#end
+
+#if($xcontext.action=="edit")
+{{info}}$services.localization.render('xe.scheduler.job.scriptexplanation')){{/info}}
+
+{{info}}Below some example of valid cron expression, from the [[official quartz scheduler documentation&gt;&gt;http://www.quartz-scheduler.org/documentation||rel=__blank]]:
+
+|= Cron expression |= Meaning
+| **0 15 10 * * ?** | Fire at 10:15am every day
+| **0 15 10 ? * MON-FRI** | Fire at 10:15am every Monday, Tuesday, Wednesday, Thursday and Friday
+| ** 0 0/5 14 * * ?** | Fire every 5 minutes starting at 2pm and ending at 2:55pm, every day
+| ** 0 15 10 ? * 6L** | Fire at 10:15am on the last Friday of every month
+{{/info}}
+
+#elseif($xcontext.action=="view")
+[[$services.localization.render('xe.scheduler.job.backtolist')&gt;&gt;Scheduler.WebHome]]
+#end
+#else
+ {{warning}}$services.localization.render('xe.scheduler.job.object'){{/warning}}
+#end
+{{/velocity}}</content>
+</xwikidoc>
