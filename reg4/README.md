@@ -54,7 +54,7 @@ Test(s) which fails to detect the regression
 
 
 
-The test added to detect the regression
+Test(s) added to detect the regression
 --------
 
 
