@@ -38,13 +38,13 @@ Note that a test was added to prove that the fix worked and so that we don’t c
 
 Test(s) which fails to detect the regression
 --------
+com/xpn/xwiki/objects/classes/BaseClass.java
 
 
-
-The test added to detect the regression
+Test(s) added to detect the regression
 --------
 
-
+addTextAreaFieldWhenExistingNumberField()
 
 Build issues
 -------
