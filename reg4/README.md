@@ -28,13 +28,6 @@ Regression in xwiki-platform, can be demonstrated with a functional test
 Issue: http://jira.xwiki.org/browse/XWIKI-13847
 Create button not available for users which only have edit rights on a subtree in the wiki (and not on the whole wiki).
 
-To reproduce:
-* remove edit rights from XWiki.XWikiAllGroup on a wiki
-* create a user
-* give edit right to this user on the Sandbox subtree (page and children)
-* login with the new user
-* go to Sandbox.WebHome
-
 Expected result:
 * the user should see the Create button in the Page content menu, so that he can create pages in the subtree, where he has the rights
 
@@ -51,12 +44,17 @@ Note that no test was added to prove the fix.
 
 Test(s) which fails to detect the regression
 --------
-
+org.xwiki.flamingo.test.ui.CreatePageAndSpaceTest
 
 
 Test(s) added to detect the regression
 --------
-
+Manual test to reproduce:
+* remove edit rights from XWiki.XWikiAllGroup on a wiki
+* create a user
+* give edit right to this user on the Sandbox subtree (page and children)
+* login with the new user
+* go to Sandbox.WebHome
 
 
 Build issues
