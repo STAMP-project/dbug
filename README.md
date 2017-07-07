@@ -1,10 +1,10 @@
-![DBug - STAMP Product - European Commission - H2020](tools/images/logo_readme_md.png)
+![DBug - STAMP Product - European Commission - H2020](docs/images/logo_readme_md.png)
 
 **DBug** - **D**atabase of **BUG**s
 
-A collection of regression use cases.
+A collection of real regression use cases.
 
-DBug contains regression cases collected from software products.
+DBug contains real regression cases collected from software products.
 
 As part of the [STAMP](https://www.stamp-project.eu) project, it is used to test and validate test automation tools, like Dspot and Pitest-Descartes, both available in [STAMP-project github](https://github.com/STAMP-project).
 
