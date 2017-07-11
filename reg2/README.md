@@ -2,6 +2,8 @@ Source project
 --------
 [SAT4J](https://gitlab.ow2.org/sat4j/sat4j)
 
+Run the tests only on org.sat4j.core package.
+
 
 Commit numbers of each version
 --------
